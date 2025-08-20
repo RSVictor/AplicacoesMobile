@@ -183,7 +183,7 @@ class _TelaAppState extends State<TelaApp> {
         child: Column(
           children: [
             const Text(
-              'Digite os dados abaixo e salve localmente com SharedPreferences',
+              'Digite os dados abaixo',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 12),
