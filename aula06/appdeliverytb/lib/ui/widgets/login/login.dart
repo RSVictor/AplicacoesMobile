@@ -30,6 +30,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20),
+                      // Campo de E-mail
                       TextField(
                         decoration: InputDecoration(
                           hintText: 'Email',
@@ -44,6 +45,7 @@ class LoginScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 15),
+                      // Campo de Senha
                       TextField(
                         obscureText: true,
                         decoration: InputDecoration(
@@ -59,6 +61,7 @@ class LoginScreen extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                       SizedBox(height: 20),
+                      // Botão de Entrar
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -71,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: AppColors.mainColor,
+                            backgroundColor: AppColors.mainColor, // Alterado para backgroundColor
                             padding: EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -87,6 +90,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20),
+                      // Link para recuperação de senha ou tela de cadastro
                       GestureDetector(
                         onTap: () {
                           // Navegar para a tela de cadastro ou recuperação de senha

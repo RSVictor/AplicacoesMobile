@@ -105,7 +105,7 @@ class SignupScreen extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: AppColors.mainColor,
+                            backgroundColor: AppColors.mainColor, // Alterado de primary para backgroundColor
                             padding: EdgeInsets.symmetric(vertical: 15),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
