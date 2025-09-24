@@ -22,17 +22,17 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   String formaPagamento = 'Cartão';
-  double desconto = 0.0;
 
   // Total sem desconto
   double get totalSemDesconto {
-    return (widget.nDiarias * widget.valorDiaria) + (widget.nPessoas * widget.valorPessoa);
+    return (widget.nDiarias * widget.valorDiaria).toDouble() +
+        (widget.nPessoas * widget.valorPessoa).toDouble();
   }
 
   // Total com desconto
   double get totalComDesconto {
     if (formaPagamento == 'PIX') {
-      return totalSemDesconto * 0.9; // 10% desconto
+      return totalSemDesconto * 0.9; // 10% de desconto
     }
     return totalSemDesconto;
   }
@@ -112,17 +112,20 @@ class _CheckoutState extends State<Checkout> {
                 'R\$ ${totalComDesconto.toStringAsFixed(2)}',
                 isBold: true,
               ),
-              Spacer(),
-              ElevatedButton(
-                onPressed: totalComDesconto == 0
-                    ? null
-                    : () {
-                        confirmarReserva();
-                      },
-                child: Text('Confirmar Reserva'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Colors.blue,  // Cor personalizada para o botão
+              SizedBox(height: 20),
+              Align(  // Alinha o botão para a parte inferior da tela
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  onPressed: totalComDesconto == 0
+                      ? null
+                      : () {
+                          confirmarReserva();
+                        },
+                  child: Text('Confirmar Reserva'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 50),  // Tamanho fixo do botão
+                    backgroundColor: Colors.blue,  // Cor personalizada para o botão
+                  ),
                 ),
               ),
             ],

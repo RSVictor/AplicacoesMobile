@@ -46,7 +46,7 @@ class _CadastroScreenState extends State<CadastroScreen> {
     try {
       // URL do JSON Server - ajuste conforme sua configuração
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/usuario/login')
+        Uri.parse('http://10.0.2.2:3000/usuarios')
 , // Altere para o seu endpoint
         headers: <String, String>{
           'Content-Type': 'application/json',

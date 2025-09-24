@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'checkout.dart'; 
+import 'checkout.dart'; // Importa a tela checkout
 
 class Destino extends StatefulWidget {
   final String nomeDestino;
   final String imagem;
-  final int valord; 
-  final int valorp; 
+  final int valord; // Valor da diária
+  final int valorp; // Valor por pessoa
 
   const Destino({
     Key? key,
@@ -69,8 +69,8 @@ class _DestinoState extends State<Destino> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 393,
-      height: 250,
+      width: double.infinity, // Ajuste o tamanho para preencher toda a largura
+      height: 300, // Tamanho fixo, pode ser ajustado conforme necessário
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
@@ -113,16 +113,30 @@ class _DestinoState extends State<Destino> {
                   ),
                 ],
               ),
-              ElevatedButton(
-                onPressed: calcularTotal,
-                child: Text('Calcular Total'),
-              ),
-              ElevatedButton(
-                onPressed: limpar,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                child: Text('Limpar'),
-              ),
             ],
+          ),
+          // Usando Expanded para evitar overflow
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: calcularTotal,
+                  child: Text('Calcular Total'),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(100, 40), // Tamanho mínimo do botão
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: limpar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    minimumSize: Size(100, 40), // Tamanho mínimo do botão
+                  ),
+                  child: Text('Limpar'),
+                ),
+              ],
+            ),
           ),
         ],
       ),

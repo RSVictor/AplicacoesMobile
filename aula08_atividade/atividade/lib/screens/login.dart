@@ -1,3 +1,4 @@
+import 'package:atividade/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // Para lidar com o JSON
@@ -13,54 +14,88 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   String _errorMessage = "";
 
-  // Função para fazer o login
-  Future<void> _login() async {
+  // URL do servidor
+  final String url = "http://10.109.83.13:3000/usuarios"; // Altere para a URL correta
+
+  List clientes =<Usuarios>[];
+  // Função para login
+  Future<void> login() async {
     setState(() {
-      _isLoading = true; // Exibe o indicador de carregamento
-      _errorMessage = ""; // Limpa mensagens de erro anteriores
+      _isLoading = true;
+      _errorMessage = "";
     });
 
-    final String username = _usernameController.text;
-    final String password = _passwordController.text;
-
-    // Verifica se os campos não estão vazios
-    if (username.isEmpty || password.isEmpty) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = "Por favor, preencha todos os campos!";
-      });
-      return;
-    }
-
     try {
-      // URL do JSON Server - ajuste conforme sua configuração
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/usuario/login')
-, // Altere para o seu endpoint
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'username': username,
-          'password': password,
-        }),
-      );
+      // Realizando a requisição GET
+      http.Response response = await http.get(Uri.parse(url));
 
+      // Verifica se a resposta foi bem-sucedida
       if (response.statusCode == 200) {
-        // Login bem-sucedido
-        // Redireciona para a Home ou outro destino
-        Navigator.pushReplacementNamed(context, '/home');
+        
+        clientes = json.decode(response.body);
+        bool encuser = false;
+        print(clientes);
+
+        // Verifica se algum usuário existe com o login e senha fornecidos
+        for (int i = 0; i < clientes.length; i++) {
+          if (_usernameController.text == clientes[i]["username"] &&
+              _passwordController.text == clientes[i]["password"]) {
+            encuser = true;
+            break;
+          }
+        }
+
+        if (encuser) {
+          // Se o usuário foi encontrado, navega para a próxima tela
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+          );
+
+          // Limpa os campos de login e senha
+          _usernameController.clear();
+          _passwordController.clear();
+        } else {
+          // Se o usuário não for encontrado, mostra mensagem de erro
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Usuário não cadastrado"),
+              duration: Duration(seconds: 2),
+            ),
+          );
+
+          // Exibe o alert dialog de erro
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Text('Usuário ou senha inválidos'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Fechar'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } else {
-        // Se não for 200, exibe uma mensagem de erro
+        // Caso a requisição falhe
         setState(() {
-          _isLoading = false;
-          _errorMessage = "Usuário ou senha inválidos.";
+          _errorMessage = "Erro ao conectar com o servidor";
         });
       }
     } catch (e) {
+      // Caso ocorra uma exceção
+      setState(() {
+        _errorMessage = "Erro: $e";
+      });
+    } finally {
       setState(() {
         _isLoading = false;
-        _errorMessage = "Erro ao conectar com o servidor.";
       });
     }
   }
@@ -76,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Campo de usuário
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -84,6 +120,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 16),
+
+            // Campo de senha
             TextField(
               controller: _passwordController,
               obscureText: true,
@@ -93,14 +131,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 16),
+
+            // Indicador de carregamento
             if (_isLoading)
               CircularProgressIndicator()
             else
               ElevatedButton(
-                onPressed: _login,
+                onPressed: login,
                 child: Text('Entrar'),
               ),
             SizedBox(height: 16),
+
+            // Exibe mensagens de erro, se houver
             if (_errorMessage.isNotEmpty)
               Text(
                 _errorMessage,
@@ -111,4 +153,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+class Usuarios{
+String id;
+String login;
+String senha;
+Usuarios (this.id, this.login,this.senha);
+factory Usuarios.fromJson (Map<String, dynamic> json){
+return Usuarios (json["id"], json["login"],json["senha"]);
+}
 }
