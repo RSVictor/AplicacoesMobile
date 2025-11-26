@@ -11,28 +11,25 @@ class MenuPage extends StatelessWidget {
     final token = context.watch<AuthProvider>().token;
 
     if (token == null || token.isEmpty) {
-      // Se o token for inválido ou não encontrado, mostramos a mensagem e o botão
       return Scaffold(
         appBar: AppBar(title: Text("Cardápio")),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Mensagem de erro
               Text(
                 "Token inválido ou não encontrado.\nFaça login novamente.",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: Colors.red),
               ),
               SizedBox(height: 20),
-              // Botão de login
               ElevatedButton(
                 onPressed: () {
                   Navigator.pushReplacementNamed(context, "/login");
                 },
                 child: Text("Ir para Login"),
                 style: ElevatedButton.styleFrom(
-                 backgroundColor: Colors.deepOrange, // Cor do botão
+                  backgroundColor: Colors.deepOrange,
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   shape: RoundedRectangleBorder(
@@ -53,13 +50,34 @@ class MenuPage extends StatelessWidget {
           "Cardápio",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.deepOrange,  // Cor personalizada da AppBar
+        backgroundColor: Colors.deepOrange,
         actions: [
-          // Ícone do carrinho de compras
-          IconButton(
-            icon: Icon(Icons.shopping_cart, color: Colors.white),
-            onPressed: () {
-              Navigator.pushNamed(context, "/cart");
+          // Exibindo o ícone do carrinho com a quantidade de itens
+          Consumer<CartProvider>(
+            builder: (context, cart, child) {
+              return IconButton(
+                icon: Stack(
+                  children: [
+                    Icon(Icons.shopping_cart, color: Colors.white),
+                    if (cart.itemCount > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.red,
+                          child: Text(
+                            '${cart.itemCount}',
+                            style: TextStyle(fontSize: 12, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/cart");
+                },
+              );
             },
           ),
           // Botão de sair (logout)
@@ -76,12 +94,10 @@ class MenuPage extends StatelessWidget {
       body: FutureBuilder<List<Food>>(
         future: ApiService().getFoods(token),
         builder: (context, snapshot) {
-          // Exibe um indicador de carregamento enquanto a requisição está em andamento
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
 
-          // Exibe erro se ocorrer algum problema durante a requisição
           if (snapshot.hasError) {
             return Center(
               child: Text(
@@ -92,19 +108,18 @@ class MenuPage extends StatelessWidget {
             );
           }
 
-          // Exibe mensagem caso não haja itens
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text("Nenhum item encontrado"));
           }
 
-          final foods = snapshot.data!; // Lista de alimentos
+          final foods = snapshot.data!;
           return ListView.builder(
             itemCount: foods.length,
             itemBuilder: (_, i) {
               final item = foods[i];
               return ListTile(
                 leading: Icon(
-                  Icons.fastfood,  // Ícone representativo (pode ser substituído por uma imagem)
+                  Icons.fastfood,
                   color: Colors.deepOrange,
                 ),
                 title: Text(item.name),
